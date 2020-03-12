@@ -1,82 +1,104 @@
-
 // пробный.cpp : Классы
-
 #define _CRT_SECURE_NO_WARNINGS   // добавление для отключения блокировки стандартных функций "СИ"
 
-#include <stdio.h>                // ввод-вывод
-#include <iostream>               // ввод-вывод С++
-//#include <windows.h>            // ввод на русской кириллице
+
+#include <iostream> // подключаем cin и cout
+#include <ctime> // подключаем clock
+#include <cstdlib> 
+//#include <string> 
+
+
 using namespace std;
 
-//Создание класса queue
-class queue
+class timer
 {
-    int q[100];
-    int sloc, rloc;
-    int who; //содержит идентификационных номер очереди
+    int seconds;
 public:
-    queue(int id); // праметризованный конструктор
-    ~queue(); // деструктор
-    void qput(int i);
-    int qget();
+    timer(const char*  t) { seconds = atoi(t); };
+    timer(int t) { seconds = t; };
+    timer(int min, int sec) { seconds = min * 60 + sec; };
+
+    void run();
 };
 
-// Определение конструктора
-queue::queue(int id)
+void timer::run()
 {
-    rloc = sloc = 0;
-    who = id;
-    cout << "Очередь " << who << " инициализирована.\n";
+    clock_t t1;
+    t1 = clock();
+    while ((clock() / CLOCKS_PER_SEC - t1 / CLOCKS_PER_SEC) < seconds)
+        ;
+    cout << "\a";
 }
 
-// Определение деструктора
-queue::~queue()
+int main()
 {
-    cout << "Очередь " << who << " разрушена.\n";
+    setlocale(LC_ALL, "Russian");
+
+    timer a(1);
+    a.run();
+
+    cout << "Введите количество секунд: ";
+    char str[80];
+    cin >> str;
+    timer b(str);
+    b.run();
+
+    cout << "Введите минуты и секунды: ";
+    int min, sec;
+    cin >> min >> sec;
+    timer c(min, sec);
+    c.run();
+
+    return 0; 
 }
 
+/*
+#include <stdio.h>                
+#include <iostream>               
+using namespace std;
 
-//Занесение из очереди целочисленного значения
-void queue::qput(int i)
-{
-    if (sloc == 100)
-    {
-        cout << "Очередь заполнена.\n";
-        return;
-    }
-    sloc++;
-    q[sloc] = i;
-}
+enum resolution {low, medium, high};
 
-//Извлечение из очереди целочисленного значения
-int queue::qget()
+class display
 {
-    if (rloc == sloc)
-    {
-        cout << "Очередь пуста.\n";
-        return 0;
-    }
-    rloc++;
-    return q[rloc];
-}
+    int width; //закрытый член по умолчанию
+    int height;
+    resolution res;
+public:
+    void set_dim(int w, int h) { width = w; height = h; };
+    void get_dim(int& w, int& h) { w = width; h = height; };
+    void set_res(resolution r) { res = r; };
+    resolution get_res() { return res; };
+};
+
+char names[3][8] = {"низкий", "средний", "высокий"};
 
 int main(void)
 {
-    //SetConsoleCP(1251);
-    //SetConsoleOutputCP(1251);
     setlocale(LC_ALL, "russian");
 
-    queue a(4);
-    a.qput(10);
-    a.qput(19);
+    display display_mode[3];
+    int i, w, h;
+    
+    display_mode[0].set_res(low);
+    display_mode[0].set_dim(640, 480);
 
-    cout << "Содержимое очереди а: ";
-    cout << a.qget() << " ";
-    cout << a.qget() << "\n";
+    display_mode[1].set_res(medium);
+    display_mode[1].set_dim(800, 600);
+
+    display_mode[2].set_res(high);
+    display_mode[2].set_dim(1600, 1200);
 
 
-    system("pause");
-    //getchar();
-    //getchar();
+    cout << "Возможные режимы отображения данных:\n\n";
+    
+    for (i = 0; i < 3; i++)
+    {
+        cout << names[display_mode[i].get_res()] << ": ";
+        display_mode[i].get_dim(w, h);
+        cout << w << " x " << h << "\n";
+    }
+
     return 0;
-}
+    system("pause");
+}*/
